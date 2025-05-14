@@ -27,4 +27,4 @@ jobs:
            FLYWAY_TOKEN: ${{ secrets.FLYWAY_TOKEN }}
       - name: Display deployment
         run: |
-           cat D__Deployment.sql
+           cat D__deployment.sql
