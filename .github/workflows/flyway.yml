@@ -18,7 +18,9 @@ jobs:
             -url="${{ secrets.FLYWAY_URL }}"
             -user="${{ secrets.FLYWAY_USER }}"
             -password="${{ secrets.FLYWAY_PASSWORD }}"
-            deploy -scriptFilename="D__deployment.sql"
         env:
            FLYWAY_EMAIL: ${{ secrets.FLYWAY_EMAIL }}
            FLYWAY_TOKEN: ${{ secrets.FLYWAY_TOKEN }}
+      - name: Display deployment
+        run: |
+           cat D_Deployment.sql
