@@ -13,7 +13,7 @@ jobs:
         uses: docker://redgate/flyway:11
         with:
           args: >-
-            prepare -source=schemaModel -target=production -scriptFilename="D__deployment.sql"
+            prepare -source=schemaModel -scriptFilename="D__deployment.sql"
             -workingDirectory="/github/workspace/"
             -url="${{ secrets.FLYWAY_URL }}"
             -user="${{ secrets.FLYWAY_USER }}"
