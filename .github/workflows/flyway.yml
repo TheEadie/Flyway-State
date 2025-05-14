@@ -23,4 +23,4 @@ jobs:
            FLYWAY_TOKEN: ${{ secrets.FLYWAY_TOKEN }}
       - name: Display deployment
         run: |
-           cat D_Deployment.sql
+           cat /github/workspace/D_Deployment.sql
