@@ -9,6 +9,10 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          path: flyway-morning
       - name: Run Flyway Migrate
         uses: docker://redgate/flyway:11
         with:
