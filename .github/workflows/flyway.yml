@@ -28,4 +28,4 @@ jobs:
         uses: red-gate/FlywayGithubAction@v0.1.5
         with:
           # JDBC URL for the database to migrate
-          url: secrets.URL
+          url: ${{ secrets.URL }}
