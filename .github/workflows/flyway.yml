@@ -1,4 +1,4 @@
-name: 'Flyway Deploy'
+name: Redgate Flyway
  
 on:
   push:
@@ -6,7 +6,8 @@ on:
       - master
  
 jobs:
-  deploy:
+  prepare:
+    name: Prepare Database Deployment Script
     runs-on: ubuntu-latest
     env:
       FLYWAY_EMAIL: ${{ secrets.FLYWAY_EMAIL }}
@@ -14,16 +15,51 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Run Flyway Deploy
+    
+      - name: Redgate Flyway Prepare
         uses: docker://redgate/flyway:11
         with:
           args: >-
             prepare
-            deploy
             -prepare.source=schemaModel
             -prepare.target=production
+            -environments.production.url="${{ secrets.FLYWAY_URL }}"
+            -environments.production.user="${{ secrets.FLYWAY_USER }}"
+            -environments.production.password="${{ secrets.FLYWAY_PASSWORD }}"
+            -workingDirectory="/github/workspace/"
+
+      - name: Upload Deployment Script
+        uses: actions/upload-artifact@v4
+        with:
+          name: database-deployment-script
+          path: deployments/D__deployment.sql
+
+  deploy:
+    name: Deploy Database Changes
+    runs-on: ubuntu-latest
+    needs: prepare
+    environment:
+      name: Production
+    env:
+      FLYWAY_EMAIL: ${{ secrets.FLYWAY_EMAIL }}
+      FLYWAY_TOKEN: ${{ secrets.FLYWAY_TOKEN }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Download Deployment Script
+        uses: actions/download-artifact@v4
+        with:
+          name: database-deployment-script
+          path: deployments
+      - name: Redgate Flyway Deploy
+        uses: docker://redgate/flyway:11
+        with:
+          args: >-
+            deploy
             -environment=production
             -environments.production.url="${{ secrets.FLYWAY_URL }}"
             -environments.production.user="${{ secrets.FLYWAY_USER }}"
             -environments.production.password="${{ secrets.FLYWAY_PASSWORD }}"
             -workingDirectory="/github/workspace/"
+
+    
