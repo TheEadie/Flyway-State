@@ -1,4 +1,4 @@
-name: 'Flyway Migrate'
+name: 'Flyway Deploy'
  
 on:
   push:
@@ -8,23 +8,22 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    env:
+      FLYWAY_EMAIL: ${{ secrets.FLYWAY_EMAIL }}
+      FLYWAY_TOKEN: ${{ secrets.FLYWAY_TOKEN }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        with:
-          path: flyway-morning
-      - name: Run Flyway Migrate
+      - name: Run Flyway Deploy
         uses: docker://redgate/flyway:11
         with:
           args: >-
-            prepare -source=schemaModel -target=default -scriptFilename="D__deployment.sql"
+            prepare
+            deploy
+            -prepare.source=schemaModel
+            -prepare.target=production
+            -environment=production
+            -environments.production.url="${{ secrets.FLYWAY_URL }}"
+            -environments.production.user="${{ secrets.FLYWAY_USER }}"
+            -environments.production.password="${{ secrets.FLYWAY_PASSWORD }}"
             -workingDirectory="/github/workspace/"
-            -url="${{ secrets.FLYWAY_URL }}"
-            -user="${{ secrets.FLYWAY_USER }}"
-            -password="${{ secrets.FLYWAY_PASSWORD }}"
-        env:
-           FLYWAY_EMAIL: ${{ secrets.FLYWAY_EMAIL }}
-           FLYWAY_TOKEN: ${{ secrets.FLYWAY_TOKEN }}
-      - name: Display deployment
-        run: |
-           cat D__deployment.sql
