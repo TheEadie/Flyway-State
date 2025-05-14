@@ -29,3 +29,5 @@ jobs:
         with:
           # JDBC URL for the database to migrate
           url: ${{ secrets.URL }}
+          user: ${{ secrets.FLYWAY_USER }}
+          password: ${{ secrets.FLYWAY_PASSWORD }}
