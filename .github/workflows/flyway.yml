@@ -3,7 +3,7 @@ name: Redgate Flyway
 on:
   push:
     branches:
-      - master
+      - main
  
 jobs:
   prepare:
